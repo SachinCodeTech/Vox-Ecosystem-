@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "vox-ecosystem";
+const CACHE_NAME = "Vox Ecosystem";
 
 const APP_FILES = [
   "./",

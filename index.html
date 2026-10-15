@@ -111,5 +111,15 @@
   </main>
 
   <footer>© CodeTech · Vox Ecosystem · Independent applications, unified access.</footer>
+  
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("Vox PWA service worker registered"))
+        .catch((error) => console.error("Service worker registration failed:", error));
+    });
+  }
+</script>
 </body>
 </html>

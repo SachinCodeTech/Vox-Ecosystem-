@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="One workspace for CodeTech's Vox applications.">
+  <title>Vox Ecosystem | CodeTech</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      color: #f5f7ff;
+      background: #0b1020;
+    }
+    header {
+      padding: 32px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #18264b, #101426);
+      border-bottom: 1px solid #283453;
+    }
+    .logo { font-size: 34px; font-weight: 800; letter-spacing: 2px; }
+    header p { color: #b9c5e5; margin-bottom: 0; }
+    main { max-width: 900px; margin: auto; padding: 24px 16px; }
+    h2 { font-size: 20px; margin: 8px 0 16px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      padding: 22px;
+      border: 1px solid #303c5c;
+      border-radius: 18px;
+      background: #151d33;
+    }
+    .icon { font-size: 32px; }
+    .card h3 { margin: 12px 0 8px; }
+    .card p { color: #b9c5e5; line-height: 1.5; min-height: 48px; }
+    .button {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      background: #4263eb;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+    .button:hover { background: #5877ff; }
+    .disabled { background: #394258; color: #c5ccda; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #98a6c8;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">VOX ECOSYSTEM</div>
+    <p>One workspace. Multiple tools. Built by CodeTech.</p>
+  </header>
+
+  <main>
+    <h2>Your Applications</h2>
+    <section class="grid">
+      <article class="card">
+        <div class="icon">📐</div>
+        <h3>VoxCADD</h3>
+        <p>Browser-based CAD drafting and design workspace.</p>
+        <a class="button" href="https://vox-cadd.vercel.app/" target="_blank" rel="noopener noreferrer">Open VoxCADD ↗</a>
+      </article>
+
+      <article class="card">
+        <div class="icon">🏠</div>
+        <h3>Arch Pad Pro</h3>
+        <p>A digital sketch pad for architectural ideas.</p>
+        <a class="button" href="https://arch-pad-pro.vercel.app/" target="_blank" rel="noopener noreferrer">Open Arch Pad ↗</a>
+      </article>
+
+      <article class="card">
+        <div class="icon">🗓️</div>
+        <h3>10to7</h3>
+        <p>Your productivity and work management application.</p>
+        <a class="button" href="https://10-to-7.vercel.app/" target="_blank" rel="noopener noreferrer">Open 10to7 ↗</a>
+      </article>
+
+      <article class="card">
+        <div class="icon">🎨</div>
+        <h3>Interior Bot</h3>
+        <p>AI interior design application. Integration will follow after troubleshooting.</p>
+        <span class="button disabled">Coming Soon</span>
+      </article>
+    </section>
+  </main>
+
+  <footer>© CodeTech · Vox Ecosystem · Independent applications, unified access.</footer>
+</body>
+</html>

@@ -1,0 +1,14 @@
+
+{
+  "id": "/",
+  "name": "Vox Ecosystem",
+  "short_name": "Vox Ecosystem",
+  "description": "One workspace for CodeTech applications.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0b1020",
+  "background_color": "#0b1020",
+  "categories": ["productivity", "utilities"]
+}

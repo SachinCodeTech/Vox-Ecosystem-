@@ -1,12 +1,16 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="description" content="One workspace for CodeTech's Vox applications.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Vox">
   <title>Vox Ecosystem | CodeTech</title>
   <style>
     * { box-sizing: border-box; }
@@ -65,14 +69,19 @@
   border-radius: 10px;
   display: block;
 }
-<link rel="manifest" href="./manifest.json">
 
+    #install {
+      display: none; margin: 18px auto 0; border: 0; cursor: pointer;
+      font: inherit; font-weight: 700; color: #fff; background: #4263eb;
+      padding: 11px 22px; border-radius: 999px;
+    }
 </style> 
 </head>
 <body>
   <header>
     <div class="logo">VOX ECOSYSTEM</div>
     <p>One workspace. Multiple tools. Built by CodeTech.</p>
+    <button id="install" type="button">⬇ Install App</button>
   </header>
 
   <main>
@@ -113,13 +122,25 @@
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js")
-        .then(() => console.log("Vox PWA service worker registered"))
-        .catch((error) => console.error(
-          "Service worker registration failed:", error
-        ));
+      navigator.serviceWorker.register("/sw.js")
+        .catch((e) => console.error("Service worker registration failed:", e));
     });
   }
+  let deferredPrompt = null;
+  const installBtn = document.getElementById("install");
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = "inline-block";
+  });
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = "none";
+  });
+  window.addEventListener("appinstalled", () => { installBtn.style.display = "none"; });
 </script>
 </body>
 </html>

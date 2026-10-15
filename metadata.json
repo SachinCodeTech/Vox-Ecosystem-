@@ -1,0 +1,8 @@
+{
+  "name": "Vox Ecosystem",
+  "description": "One workspace for CodeTech Developers' Vox applications.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

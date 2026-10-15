@@ -1,146 +1,591 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0b1020">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="description" content="One workspace for CodeTech's Vox applications.">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/png" href="/icon-192.png">
-  <link rel="apple-touch-icon" href="/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Vox">
-  <title>Vox Ecosystem | CodeTech</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      color: #f5f7ff;
-      background: #0b1020;
-    }
-    header {
-      padding: 32px 20px;
-      text-align: center;
-      background: linear-gradient(135deg, #18264b, #101426);
-      border-bottom: 1px solid #283453;
-    }
-    .logo { font-size: 34px; font-weight: 800; letter-spacing: 2px; }
-    header p { color: #b9c5e5; margin-bottom: 0; }
-    main { max-width: 900px; margin: auto; padding: 24px 16px; }
-    h2 { font-size: 20px; margin: 8px 0 16px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      padding: 22px;
-      border: 1px solid #303c5c;
-      border-radius: 18px;
-      background: #151d33;
-    }
-    .icon { font-size: 32px; }
-    .card h3 { margin: 12px 0 8px; }
-    .card p { color: #b9c5e5; line-height: 1.5; min-height: 48px; }
-    .button {
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      color: white;
-      background: #4263eb;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 700;
-    }
-    .button:hover { background: #5877ff; }
-    .disabled { background: #394258; color: #c5ccda; }
-    footer {
-      text-align: center;
-      padding: 24px;
-      color: #98a6c8;
-      font-size: 13px;
-    }
-    .app-icon {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  border-radius: 10px;
-  display: block;
-}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vox Ecosystem | CodeTech Developers</title>
+<meta name="description" content="Vox Ecosystem — one workspace for CodeTech Developers' Vox applications.">
+<meta name="color-scheme" content="dark">
 
-    #install {
-      display: none; margin: 18px auto 0; border: 0; cursor: pointer;
-      font: inherit; font-weight: 700; color: #fff; background: #4263eb;
-      padding: 11px 22px; border-radius: 999px;
-    }
-</style> 
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#070b18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vox Ecosystem">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<style>
+:root{
+  --bg:#070b18; --bg2:#0d1428; --surface:#111a33; --surface2:#17224a;
+  --line:rgba(255,255,255,.08); --text:#f1f4ff; --muted:#93a0c6; --dim:#6b7899;
+  --a1:#5b8cff; --a2:#8b5cff; --ok:#2ed3a0; --warn:#ffb84d;
+  --nav-h:68px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{color-scheme:dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5;overflow-x:hidden;
+  padding-top:env(safe-area-inset-top,0px);
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(700px 420px at 15% -5%,rgba(91,140,255,.22),transparent 70%),
+    radial-gradient(600px 400px at 100% 10%,rgba(139,92,255,.16),transparent 70%),
+    var(--bg);
+}
+svg.i{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+/* Layout */
+.app{max-width:760px;margin:0 auto;padding:0 18px calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 28px)}
+.view{display:none;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Top bar */
+.topbar{display:flex;align-items:center;gap:12px;padding:18px 0 6px}
+.topbar img{width:40px;height:40px;border-radius:11px;box-shadow:0 4px 18px rgba(91,140,255,.35)}
+.brand{font-weight:800;letter-spacing:.14em;font-size:.95rem}
+.brand small{display:block;font-weight:500;letter-spacing:.04em;color:var(--muted);font-size:.72rem;margin-top:1px}
+
+/* Hero */
+.hero{margin:18px 0 22px;padding:26px 22px;border-radius:24px;border:1px solid var(--line);
+  background:linear-gradient(135deg,rgba(91,140,255,.18),rgba(139,92,255,.12)),var(--surface);
+  position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,255,.35),transparent 70%)}
+.hero h1{font-size:1.65rem;line-height:1.2;font-weight:800;position:relative;z-index:1}
+.hero h1 span{background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);margin-top:8px;font-size:.95rem;max-width:34em;position:relative;z-index:1}
+.stats{display:flex;gap:10px;margin-top:18px;position:relative;z-index:1;flex-wrap:wrap}
+.stat{padding:8px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.stat b{display:block;color:var(--text);font-size:1.05rem}
+#install{display:none;margin-top:16px;position:relative;z-index:1;padding:11px 20px;border-radius:12px;font-weight:700;color:#fff;
+  background:linear-gradient(90deg,var(--a1),var(--a2));align-items:center;gap:8px;box-shadow:0 8px 24px rgba(91,140,255,.35)}
+
+/* Search */
+.search{display:flex;align-items:center;gap:10px;padding:0 14px;height:48px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);margin-bottom:22px}
+.search:focus-within{border-color:var(--a1)}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;min-width:0}
+.search input::placeholder{color:var(--dim)}
+
+.section-title{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:6px 4px 12px}
+
+/* App cards */
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:620px){.grid{grid-template-columns:1fr 1fr}}
+.card{position:relative;display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--line);transition:transform .15s,border-color .15s}
+.card:active{transform:scale(.985)}
+@media(hover:hover){.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}}
+.card-head{display:flex;align-items:center;gap:14px}
+.tile{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;color:#fff;flex:none;overflow:hidden}
+.tile svg.i{width:26px;height:26px}
+.tile img{width:100%;height:100%;object-fit:cover}
+.card h3{font-size:1.08rem;line-height:1.25}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;margin-top:4px}
+.tag.live{color:var(--ok);background:rgba(46,211,160,.12)}
+.tag.soon{color:var(--warn);background:rgba(255,184,77,.12)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.card p{color:var(--muted);font-size:.92rem;flex:1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:.95rem;color:#fff;
+  background:linear-gradient(90deg,var(--a1),var(--a2))}
+.btn.off{background:rgba(255,255,255,.06);color:var(--dim);border:1px dashed var(--line);cursor:default}
+.empty{display:none;text-align:center;color:var(--dim);padding:40px 0}
+
+/* Info lists */
+.page-title{font-size:1.5rem;font-weight:800;padding:20px 0 4px}
+.page-sub{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-radius:16px;
+  background:var(--surface);border:1px solid var(--line);font-weight:600;text-align:left;width:100%}
+.row:active{background:var(--surface2)}
+.row .l{display:flex;align-items:center;gap:12px}
+.row .l svg{color:var(--a1)}
+.row > svg{color:var(--dim)}
+.kv{padding:6px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-bottom:24px}
+.kv div{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.kv div:last-child{border:0}
+.kv span{color:var(--muted)}
+.kv b{font-weight:600;text-align:right;word-break:break-word}
+.kv a{color:var(--a1)}
+
+/* Sub pages */
+.back{display:inline-flex;align-items:center;gap:6px;padding:18px 0 4px;color:var(--a1);font-weight:600}
+.doc h2{font-size:1.5rem;font-weight:800;margin:10px 0 4px}
+.doc .meta{color:var(--dim);font-size:.82rem;margin-bottom:18px}
+.doc h3{font-size:1.02rem;margin:20px 0 6px}
+.doc p,.doc li{color:var(--muted);font-size:.95rem}
+.doc ul{padding-left:20px;margin-top:4px}
+.doc a{color:var(--a1)}
+.ver{padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-bottom:12px}
+.ver h3{margin:0 0 2px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ver h3 small{font-weight:500;color:var(--dim);font-size:.78rem}
+.ver ul{margin-top:8px}
+
+/* Bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:20;padding-bottom:env(safe-area-inset-bottom,0px);
+  background:rgba(7,11,24,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+nav .in{max-width:760px;margin:0 auto;height:var(--nav-h);display:flex}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--dim);font-size:.72rem;font-weight:600}
+nav button svg.i{width:24px;height:24px}
+nav button.on{color:var(--a1)}
+.tag.stop{color:#ff6b7a;background:rgba(255,107,122,.12)}
+.notice{padding:10px 12px;border-radius:12px;background:rgba(255,107,122,.08);border:1px solid rgba(255,107,122,.25);color:#ffb3bb;font-size:.85rem}
+.stat.red b{color:#ff6b7a}
+.box{padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-bottom:18px}
+.box label{display:block;font-size:.78rem;color:var(--muted);margin:10px 0 4px}
+.box input[type=text],.box input[type=password]{width:100%;height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font:inherit;outline:0}
+.box input:focus{border-color:var(--a1)}
+.chk{display:flex!important;align-items:center;gap:8px;margin-top:12px!important}
+.chk input{width:18px;height:18px}
+.svc{padding:14px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-bottom:10px}
+.svc-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.svc-top b{display:block;font-size:1rem}
+.svc-top small{font-size:.78rem;font-weight:600}
+.svc-top small.on{color:var(--ok)}.svc-top small.off{color:#ff6b7a}
+.sw{position:relative;width:52px;height:30px;flex:none}
+.sw input{opacity:0;width:100%;height:100%;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.sw i{position:absolute;inset:0;border-radius:99px;background:#3a2530;transition:.2s}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked+i{background:var(--ok)}
+.sw input:checked+i::after{transform:translateX(22px)}
+.svc input.msg{width:100%;height:42px;margin-top:12px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font:inherit;outline:0}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.btnrow button{flex:1;min-width:120px;padding:12px 14px;border-radius:12px;font-weight:700;border:1px solid var(--line);background:var(--surface2)}
+.btnrow button.primary{background:linear-gradient(90deg,var(--a1),var(--a2));border:0;color:#fff}
+.btnrow button.danger{color:#ff8a96}
+.btnrow button:disabled{opacity:.5}
+#adm-msg{font-size:.9rem;margin:6px 0 14px;min-height:1.3em}
+#adm-msg.ok{color:var(--ok)}#adm-msg.err{color:#ff8a96}
+.hint{font-size:.8rem;color:var(--dim);margin-top:10px}
+#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);background:var(--surface2);border:1px solid var(--line);padding:10px 18px;border-radius:99px;font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+#toast.show{opacity:1}
+footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
+</style>
 </head>
 <body>
-  <header>
-    <div class="logo">VOX ECOSYSTEM</div>
-    <p>One workspace. Multiple tools. Built by CodeTech.</p>
-    <button id="install" type="button">⬇ Install App</button>
-  </header>
+<div class="app">
 
-  <main>
-    <h2>Your Applications</h2>
-    <section class="grid">
-      <article class="card">
-        <img src="./icon-512.png"
-     alt="VoxCADD logo"
-     class="app-icon">
-        <h3>VoxCADD</h3>
-        <p>Browser-based CAD drafting and design workspace.</p>
-        <a class="button" href="https://vox-cadd.vercel.app/" target="_blank" rel="noopener noreferrer">Open VoxCADD ↗</a>
-      </article>
+  <!-- APPS -->
+  <section class="view active" id="v-apps">
+    <div class="topbar">
+      <img src="/icon-192.png" alt="Vox Ecosystem logo">
+      <div class="brand">VOX ECOSYSTEM<small>by CodeTech Developers</small></div>
+    </div>
 
-      <article class="card">
-        <div class="icon">🏠</div>
-        <h3>Arch Pad Pro</h3>
-        <p>A digital sketch pad for architectural ideas.</p>
-        <a class="button" href="https://arch-pad-pro.vercel.app/" target="_blank" rel="noopener noreferrer">Open Arch Pad ↗</a>
-      </article>
+    <div class="hero">
+      <h1>One workspace.<br><span>Multiple tools.</span></h1>
+      <p>Launch every Vox application from a single, unified home — built and maintained by CodeTech Developers.</p>
+      <div class="stats">
+        <div class="stat"><b id="n-live">3</b>Live apps</div>
+        <div class="stat"><b id="n-soon">1</b>Coming soon</div>
+        <div class="stat red" id="stat-stop" style="display:none"><b id="n-stop">0</b>Stopped</div>
+      </div>
+      <button id="install" type="button">
+        <svg class="i" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg> Install App
+      </button>
+    </div>
 
-      <article class="card">
-        <div class="icon">🗓️</div>
-        <h3>10to7</h3>
-        <p>Your productivity and work management application.</p>
-        <a class="button" href="https://10-to-7.vercel.app/" target="_blank" rel="noopener noreferrer">Open 10to7 ↗</a>
-      </article>
+    <label class="search">
+      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Search applications" autocomplete="off">
+    </label>
 
-      <article class="card">
-        <div class="icon">🎨</div>
-        <h3>Interior Bot</h3>
-        <p>AI interior design application. Integration will follow after troubleshooting.</p>
-        <span class="button disabled">Coming Soon</span>
-      </article>
-    </section>
-  </main>
-  <footer>© CodeTech · Vox Ecosystem · Independent applications, unified access.</footer>
+    <div class="section-title">Your Applications</div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">No applications match your search.</div>
+    <footer>© CodeTech Developers · Vox Ecosystem<br>Independent applications, unified access.</footer>
+  </section>
+
+  <!-- INFO -->
+  <section class="view" id="v-info">
+    <h1 class="page-title">Info</h1>
+    <p class="page-sub">About Vox Ecosystem and CodeTech Developers.</p>
+
+    <div class="section-title">Product</div>
+    <div class="list">
+      <button class="row" data-go="about"><span class="l"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>About</span><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="row" data-go="versions"><span class="l"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Version History</span><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+
+    <div class="section-title">Legal Information</div>
+    <div class="list">
+      <button class="row" data-go="privacy"><span class="l"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/></svg>Privacy Policy</span><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="row" data-go="terms"><span class="l"><svg class="i" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Terms of Use</span><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+
+    <div id="admin-entry" style="display:none">
+      <div class="section-title">Administration</div>
+      <div class="list">
+        <button class="row" data-go="admin"><span class="l"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Admin Console</span><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <div class="section-title">Company Info</div>
+    <div class="kv">
+      <div><span>Company</span><b>CodeTech Developers</b></div>
+      <div><span>Lead Developer</span><b>Sachin Sheth</b></div>
+      <div><span>Email</span><b><a href="mailto:codetech.appstore@gmail.com">codetech.appstore@gmail.com</a></b></div>
+      <div id="ver-row"><span>Version</span><b>1.2.0</b></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="view doc" id="v-about">
+    <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
+    <h2>About Vox Ecosystem</h2>
+    <p class="meta">Version 1.2.0 · CodeTech Developers</p>
+    <p>Vox Ecosystem is a unified launcher for the Vox family of applications. Instead of remembering separate links, you get one installable home screen that opens each tool in a tap.</p>
+    <h3>What's inside</h3>
+    <ul>
+      <li><b>VoxCADD</b> — browser-based CAD drafting and design workspace.</li>
+      <li><b>Arch Pad Pro</b> — a digital sketch pad for architectural ideas.</li>
+      <li><b>10to7</b> — productivity and work management.</li>
+      <li><b>Interior Bot</b> — AI interior design, coming soon.</li>
+    </ul>
+    <h3>Independent by design</h3>
+    <p>Each application is built and hosted independently. Vox Ecosystem simply connects them, so one app never depends on another to work.</p>
+    <h3>Built by</h3>
+    <p>CodeTech Developers · Lead Developer: Sachin Sheth.</p>
+  </section>
+
+  <!-- VERSIONS -->
+  <section class="view doc" id="v-versions">
+    <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
+    <h2>Version History</h2>
+    <p class="meta">Release notes</p>
+    <div class="ver">
+      <h3>1.2.0 <small>October 2026</small></h3>
+      <ul><li>Admin Console: stop or resume individual services.</li><li>Stopped services show a clear status and message.</li><li>New Vox Ecosystem logo.</li></ul>
+    </div>
+    <div class="ver">
+      <h3>1.1.0 <small>October 2026</small></h3>
+      <ul><li>Redesigned, professional interface with bottom navigation.</li><li>Installable app with offline support.</li><li>App search and live status labels.</li><li>New Info section: About, Version History, Privacy Policy and Terms of Use.</li></ul>
+    </div>
+    <div class="ver">
+      <h3>1.0.0 <small>Initial release</small></h3>
+      <ul><li>Launcher for VoxCADD, Arch Pad Pro and 10to7.</li><li>Interior Bot placeholder.</li></ul>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="view doc" id="v-privacy">
+    <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
+    <h2>Privacy Policy</h2>
+    <p class="meta">Last updated: October 2026</p>
+    <p>Vox Ecosystem, provided by CodeTech Developers, is a launcher that links to separate applications. This policy covers the launcher itself.</p>
+    <h3>Information we collect</h3>
+    <p>The launcher does not require an account and does not collect, store or transmit personal information. It stores only the files needed to work offline on your device.</p>
+    <h3>Third-party applications</h3>
+    <p>The apps you open from here (VoxCADD, Arch Pad Pro, 10to7 and others) are independent and open in your browser. Each has its own data handling, and any data you enter is subject to that app's own policy.</p>
+    <h3>Cookies and tracking</h3>
+    <p>The launcher does not use advertising or tracking cookies.</p>
+    <h3>Contact</h3>
+    <p>Questions: <a href="mailto:codetech.appstore@gmail.com">codetech.appstore@gmail.com</a></p>
+  </section>
+
+  <!-- TERMS -->
+  <section class="view doc" id="v-terms">
+    <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
+    <h2>Terms of Use</h2>
+    <p class="meta">Last updated: October 2026</p>
+    <p>By using Vox Ecosystem you agree to these terms.</p>
+    <h3>Use of the service</h3>
+    <p>Vox Ecosystem is provided free of charge as a convenience launcher. You agree to use it and the linked applications lawfully.</p>
+    <h3>Linked applications</h3>
+    <p>Applications reached through the launcher are independent services and may have their own terms.</p>
+    <h3>Availability and changes</h3>
+    <p>The service is provided "as is" without warranties. CodeTech Developers may update, change or discontinue features at any time.</p>
+    <h3>Intellectual property</h3>
+    <p>The Vox name, logo and interface are the property of CodeTech Developers.</p>
+    <h3>Contact</h3>
+    <p><a href="mailto:codetech.appstore@gmail.com">codetech.appstore@gmail.com</a></p>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="view doc" id="v-admin">
+    <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
+    <h2>Admin Console</h2>
+    <p class="meta" id="adm-updated">Status not loaded yet</p>
+
+    <div class="section-title">Services</div>
+    <div id="adm-list"></div>
+    <div class="btnrow">
+      <button type="button" class="danger" id="adm-stopall">Stop all</button>
+      <button type="button" id="adm-resumeall">Resume all</button>
+    </div>
+    <div class="btnrow"><button type="button" class="primary" id="adm-publish">Publish changes</button></div>
+    <p id="adm-msg"></p>
+
+    <div class="section-title">Publishing connection</div>
+    <div class="box">
+      <label for="g-owner">GitHub username</label>
+      <input id="g-owner" type="text" autocomplete="off" autocapitalize="none" placeholder="your-github-username">
+      <label for="g-repo">Repository</label>
+      <input id="g-repo" type="text" autocomplete="off" autocapitalize="none" placeholder="Vox-Ecosystem-">
+      <label for="g-branch">Branch</label>
+      <input id="g-branch" type="text" autocomplete="off" autocapitalize="none" value="main">
+      <label for="g-token">Access token</label>
+      <input id="g-token" type="password" autocomplete="off" placeholder="github_pat_…">
+      <label class="chk"><input type="checkbox" id="g-remember"> Remember on this device</label>
+      <p class="hint">Use a fine-grained token limited to this one repository with Contents: Read and write. Publishing is protected by this token — without it nobody can change service status.</p>
+      <div class="btnrow"><button type="button" id="g-save">Save connection</button></div>
+    </div>
+    <div class="btnrow"><button type="button" class="danger" id="adm-lock">Lock admin &amp; forget token</button></div>
+  </section>
+
+</div>
+
+<div id="toast" role="status"></div>
+
+<nav aria-label="Main">
+  <div class="in">
+    <button data-go="apps" id="nav-apps" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>Apps</button>
+    <button data-go="info" id="nav-info"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>Info</button>
+  </div>
+</nav>
+
 <script>
+(function () {
+  var APPS = [
+    { id: "voxcadd", name: "VoxCADD", desc: "Browser-based CAD drafting and design workspace.", url: "https://vox-cadd.vercel.app/", live: true, logo: "/voxcadd-logo.png", bg: "linear-gradient(135deg,#0b1020,#10304a)" },
+    { id: "archpad", name: "Arch Pad Pro", desc: "A digital sketch pad for architectural ideas.", url: "https://arch-pad-pro.vercel.app/", live: true, bg: "linear-gradient(135deg,#5b8cff,#3a5bd9)",
+      icon: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>' },
+    { id: "tento7", name: "10to7", desc: "Your productivity and work management application.", url: "https://10-to-7.vercel.app/", live: true, bg: "linear-gradient(135deg,#8b5cff,#5b3fd1)",
+      icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h3"/>' },
+    { id: "interiorbot", name: "Interior Bot", desc: "AI interior design application. Integration will follow after troubleshooting.", live: false, bg: "linear-gradient(135deg,#3a4468,#262e4d)",
+      icon: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>' }
+  ];
+
+  var grid = document.getElementById("grid"), empty = document.getElementById("empty"), q = document.getElementById("q");
+  var ARROW = '<svg class="i" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg>';
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  var status = {};   // id -> {enabled, message} as published
+  function isStopped(a){ return a.live && status[a.id] && status[a.id].enabled === false; }
+
+  function render(filter) {
+    var f = (filter || "").trim().toLowerCase(), html = "", shown = 0;
+    APPS.forEach(function (a) {
+      if (f && (a.name + " " + a.desc).toLowerCase().indexOf(f) === -1) return;
+      shown++;
+      var stopped = isStopped(a);
+      var tile = a.logo ? '<img src="' + a.logo + '" alt="' + esc(a.name) + ' logo">'
+                        : '<svg class="i" viewBox="0 0 24 24">' + a.icon + '</svg>';
+      var tag = !a.live ? '<span class="tag soon">Coming soon</span>'
+              : stopped ? '<span class="tag stop">Stopped</span>' : '<span class="tag live">Live</span>';
+      var note = stopped ? '<div class="notice">' + esc((status[a.id].message || "").trim() || "This service is temporarily unavailable.") + '</div>' : "";
+      var action = !a.live ? '<span class="btn off">Coming Soon</span>'
+        : stopped ? '<span class="btn off">Temporarily unavailable</span>'
+        : '<a class="btn" href="' + a.url + '" target="_blank" rel="noopener noreferrer">Open ' + esc(a.name) + ' ' + ARROW + '</a>';
+      html += '<article class="card"><div class="card-head"><div class="tile" style="background:' + a.bg + '">' + tile + '</div>' +
+              '<div><h3>' + esc(a.name) + '</h3>' + tag + '</div></div>' +
+              '<p>' + esc(a.desc) + '</p>' + note + action + '</article>';
+    });
+    grid.innerHTML = html;
+    empty.style.display = shown ? "none" : "block";
+    var live = 0, soon = 0, stop = 0;
+    APPS.forEach(function (a) { if (!a.live) soon++; else if (isStopped(a)) stop++; else live++; });
+    document.getElementById("n-live").textContent = live;
+    document.getElementById("n-soon").textContent = soon;
+    document.getElementById("n-stop").textContent = stop;
+    document.getElementById("stat-stop").style.display = stop ? "" : "none";
+  }
+  q.addEventListener("input", function () { render(q.value); });
+  render();
+
+  // Navigation (hash based so the Back button works)
+  var VIEWS = ["apps", "info", "about", "versions", "privacy", "terms", "admin"];
+  function show() {
+    var id = (location.hash || "#apps").slice(1);
+    if (VIEWS.indexOf(id) === -1) id = "apps";
+    if (id === "admin" && lsGet("vox_admin") !== "1") id = "info";
+    VIEWS.forEach(function (v) { document.getElementById("v-" + v).classList.toggle("active", v === id); });
+    var tab = id === "apps" ? "apps" : "info";
+    document.getElementById("nav-apps").classList.toggle("on", tab === "apps");
+    document.getElementById("nav-info").classList.toggle("on", tab === "info");
+    window.scrollTo(0, 0);
+  }
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-go]");
+    if (el) { location.hash = "#" + el.getAttribute("data-go"); }
+  });
+  window.addEventListener("hashchange", show);
+  show();
+
+
+  // ---------- Helpers ----------
+  function lsGet(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k,v){ try { localStorage.setItem(k,v); } catch (e) {} }
+  function lsDel(k){ try { localStorage.removeItem(k); } catch (e) {} }
+  var toastEl = document.getElementById("toast"), toastT;
+  function toast(m){ toastEl.textContent = m; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200); }
+
+  // ---------- Live service status ----------
+  var updatedAt = "";
+  function loadStatus() {
+    return fetch("/services.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("no status"); return r.json(); })
+      .then(function (j) {
+        status = (j && j.services) || {};
+        updatedAt = (j && j.updated) || "";
+        render(q.value);
+        resetDraft();
+      })
+      .catch(function () { /* offline or missing file: all services stay available */ });
+  }
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) loadStatus(); });
+  setInterval(loadStatus, 60000);
+
+  // ---------- Admin ----------
+  var LIVE = APPS.filter(function (a) { return a.live; });
+  var draft = {}, sessionToken = "";
+  var admList = document.getElementById("adm-list"), admMsg = document.getElementById("adm-msg");
+  function setMsg(t, cls){ admMsg.textContent = t || ""; admMsg.className = cls || ""; }
+
+  function resetDraft() {
+    draft = {};
+    LIVE.forEach(function (a) {
+      var s = status[a.id] || {};
+      draft[a.id] = { enabled: s.enabled !== false, message: s.message || "" };
+    });
+    renderAdmin();
+  }
+  function renderAdmin() {
+    var html = "";
+    LIVE.forEach(function (a) {
+      var d = draft[a.id] || { enabled: true, message: "" };
+      html += '<div class="svc" data-id="' + a.id + '"><div class="svc-top"><div><b>' + esc(a.name) + '</b>' +
+        '<small class="' + (d.enabled ? 'on">Running' : 'off">Stopped') + '</small></div>' +
+        '<label class="sw"><input type="checkbox" data-toggle="' + a.id + '"' + (d.enabled ? " checked" : "") + '><i></i></label></div>' +
+        (d.enabled ? "" : '<input class="msg" type="text" data-msg="' + a.id + '" placeholder="Message shown to users (optional)" value="' + esc(d.message) + '">') +
+        '</div>';
+    });
+    admList.innerHTML = html;
+    var u = document.getElementById("adm-updated");
+    u.textContent = updatedAt ? "Last published: " + new Date(updatedAt).toLocaleString() : "No published status yet — all services are running";
+  }
+  admList.addEventListener("change", function (e) {
+    var id = e.target.getAttribute("data-toggle");
+    if (!id) return;
+    draft[id].enabled = e.target.checked;
+    renderAdmin();
+    setMsg("Unsaved changes — tap Publish changes.");
+  });
+  admList.addEventListener("input", function (e) {
+    var id = e.target.getAttribute("data-msg");
+    if (id) draft[id].message = e.target.value;
+  });
+  document.getElementById("adm-stopall").addEventListener("click", function () {
+    LIVE.forEach(function (a) { draft[a.id].enabled = false; }); renderAdmin(); setMsg("Unsaved changes — tap Publish changes.");
+  });
+  document.getElementById("adm-resumeall").addEventListener("click", function () {
+    LIVE.forEach(function (a) { draft[a.id].enabled = true; }); renderAdmin(); setMsg("Unsaved changes — tap Publish changes.");
+  });
+
+  // Connection settings
+  var gOwner = document.getElementById("g-owner"), gRepo = document.getElementById("g-repo"),
+      gBranch = document.getElementById("g-branch"), gToken = document.getElementById("g-token"),
+      gRemember = document.getElementById("g-remember");
+  gOwner.value = lsGet("vox_g_owner") || "";
+  gRepo.value = lsGet("vox_g_repo") || "";
+  gBranch.value = lsGet("vox_g_branch") || "main";
+  var savedTok = lsGet("vox_g_token");
+  if (savedTok) { gToken.value = savedTok; gRemember.checked = true; }
+
+  document.getElementById("g-save").addEventListener("click", function () {
+    lsSet("vox_g_owner", gOwner.value.trim());
+    lsSet("vox_g_repo", gRepo.value.trim());
+    lsSet("vox_g_branch", gBranch.value.trim() || "main");
+    sessionToken = gToken.value.trim();
+    if (gRemember.checked && sessionToken) lsSet("vox_g_token", sessionToken); else lsDel("vox_g_token");
+    toast("Connection saved");
+  });
+
+  function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+
+  document.getElementById("adm-publish").addEventListener("click", function () {
+    var owner = gOwner.value.trim(), repo = gRepo.value.trim(), branch = gBranch.value.trim() || "main", token = gToken.value.trim();
+    if (!owner || !repo || !token) { setMsg("Fill in the publishing connection first (username, repository, token).", "err"); return; }
+    var btn = this; btn.disabled = true; setMsg("Publishing…");
+    var api = "https://api.github.com/repos/" + encodeURIComponent(owner) + "/" + encodeURIComponent(repo) + "/contents/services.json";
+    var auth = { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" };
+    var body = { updated: new Date().toISOString(), services: JSON.parse(JSON.stringify(draft)) };
+
+    fetch(api + "?ref=" + encodeURIComponent(branch), { headers: auth, cache: "no-store" })
+      .then(function (r) {
+        if (r.status === 404) return null;
+        if (r.status === 401 || r.status === 403) throw new Error("Token rejected. Check the token and its repository permission.");
+        if (!r.ok) throw new Error("GitHub error " + r.status);
+        return r.json();
+      })
+      .then(function (file) {
+        var payload = { message: "Admin: update service status", content: b64(JSON.stringify(body, null, 2) + "\n"), branch: branch };
+        if (file && file.sha) payload.sha = file.sha;
+        var hdr = { "Content-Type": "application/json" };
+        Object.keys(auth).forEach(function (k) { hdr[k] = auth[k]; });
+        return fetch(api, { method: "PUT", headers: hdr, body: JSON.stringify(payload) });
+      })
+      .then(function (r) {
+        if (r.ok) return r.json();
+        return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.message || ("GitHub error " + r.status)); });
+      })
+      .then(function () {
+        status = JSON.parse(JSON.stringify(draft)); updatedAt = body.updated; render(q.value); renderAdmin();
+        lsSet("vox_g_owner", owner); lsSet("vox_g_repo", repo); lsSet("vox_g_branch", branch);
+        if (gRemember.checked) lsSet("vox_g_token", token);
+        setMsg("Published. Vercel redeploys in about a minute, then every device picks up the change.", "ok");
+      })
+      .catch(function (err) { setMsg(err.message || "Publish failed.", "err"); })
+      .then(function () { btn.disabled = false; });
+  });
+
+  // Unlock: tap the Version row 5 times
+  var adminEntry = document.getElementById("admin-entry");
+  function syncAdminEntry(){ adminEntry.style.display = lsGet("vox_admin") === "1" ? "" : "none"; }
+  syncAdminEntry();
+  var taps = 0, tapT;
+  document.getElementById("ver-row").addEventListener("click", function () {
+    taps++; clearTimeout(tapT); tapT = setTimeout(function () { taps = 0; }, 1500);
+    if (taps >= 5) { taps = 0; lsSet("vox_admin", "1"); syncAdminEntry(); toast("Admin console unlocked"); }
+  });
+  document.getElementById("adm-lock").addEventListener("click", function () {
+    lsDel("vox_admin"); lsDel("vox_g_token"); gToken.value = ""; gRemember.checked = false; sessionToken = "";
+    syncAdminEntry(); location.hash = "#info"; toast("Admin locked");
+  });
+
+  resetDraft();
+  loadStatus();
+
+  // Service worker
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js")
-        .catch((e) => console.error("Service worker registration failed:", e));
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function (e) { console.error("Service worker registration failed:", e); });
     });
   }
-  let deferredPrompt = null;
-  const installBtn = document.getElementById("install");
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = "inline-block";
+
+  // Install button
+  var deferred = null, btn = document.getElementById("install");
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); deferred = e; btn.style.display = "inline-flex"; });
+  btn.addEventListener("click", function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function () { deferred = null; btn.style.display = "none"; });
   });
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBtn.style.display = "none";
-  });
-  window.addEventListener("appinstalled", () => { installBtn.style.display = "none"; });
+  window.addEventListener("appinstalled", function () { btn.style.display = "none"; });
+})();
 </script>
 </body>
 </html>

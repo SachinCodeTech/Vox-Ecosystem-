@@ -1,6 +1,6 @@
 {
   "name": "Vox Ecosystem",
-  "description": "One workspace for CodeTech Developers' Vox applications.",
+  "description": "Unified workspace launcher and management hub for CodeTech Developers' Vox suite of applications.",
   "permissions": [],
   "capabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

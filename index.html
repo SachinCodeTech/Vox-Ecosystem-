@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Vox Ecosystem | CodeTech Developers</title>
-<meta name="description" content="Vox Ecosystem — one workspace for CodeTech Developers' Vox applications.">
+<meta name="description" content="Vox Ecosystem — unified workspace launcher and management hub for CodeTech Developers' Vox suite of applications.">
+<meta property="og:title" content="Vox Ecosystem | CodeTech Developers">
+<meta property="og:description" content="Unified workspace launcher and management hub for CodeTech Developers' Vox suite of applications.">
 <meta name="color-scheme" content="dark">
 
 <link rel="manifest" href="/manifest.json">
@@ -43,6 +45,7 @@ body::before{
 svg.i{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Layout */
 .app{max-width:760px;margin:0 auto;padding:0 18px calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 28px)}
@@ -57,7 +60,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .brand small{display:block;font-weight:500;letter-spacing:.04em;color:var(--muted);font-size:.72rem;margin-top:1px}
 
 /* Hero */
-.hero{margin:18px 0 22px;padding:26px 22px;border-radius:24px;border:1px solid var(--line);
+.hero{margin:18px 0 20px;padding:26px 22px;border-radius:24px;border:1px solid var(--line);
   background:linear-gradient(135deg,rgba(91,140,255,.18),rgba(139,92,255,.12)),var(--surface);
   position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;
@@ -71,37 +74,124 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 #install{display:none;margin-top:16px;position:relative;z-index:1;padding:11px 20px;border-radius:12px;font-weight:700;color:#fff;
   background:linear-gradient(90deg,var(--a1),var(--a2));align-items:center;gap:8px;box-shadow:0 8px 24px rgba(91,140,255,.35)}
 
-/* Search */
+/* Search & Sort Toolbar */
+.toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:stretch;position:relative}
+@media(max-width:480px){
+  .toolbar{flex-direction:column}
+}
+.search-wrapper{flex:1;position:relative;min-width:0}
 .search{display:flex;align-items:center;gap:10px;padding:0 14px;height:48px;border-radius:14px;
-  background:var(--surface);border:1px solid var(--line);color:var(--muted);margin-bottom:22px}
-.search:focus-within{border-color:var(--a1)}
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);transition:border-color .15s,box-shadow .15s}
+.search:focus-within{border-color:var(--a1);box-shadow:0 0 0 3px rgba(91,140,255,.15)}
 .search input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;min-width:0}
 .search input::placeholder{color:var(--dim)}
+.search-clear{display:none;align-items:center;justify-content:center;color:var(--dim);width:26px;height:26px;border-radius:50%;transition:all .15s}
+.search-clear:hover{color:var(--text);background:rgba(255,255,255,.1)}
+.search-clear svg{width:16px;height:16px}
 
-.section-title{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:6px 4px 12px}
+/* Search Dropdown / Autocomplete */
+.search-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:60;
+  background:rgba(17,26,51,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.16);border-radius:16px;box-shadow:0 16px 36px rgba(0,0,0,.6);
+  padding:6px;max-height:310px;overflow-y:auto;animation:dropFade .16s ease
+}
+@keyframes dropFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.search-dropdown-title{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);padding:8px 12px 6px}
+.search-item{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .12s;text-align:left;width:100%
+}
+.search-item:hover, .search-item.active-item{background:rgba(91,140,255,.16)}
+.search-item .item-l{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.search-item .item-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;overflow:hidden;color:#fff}
+.search-item .item-icon svg{width:16px;height:16px}
+.search-item .item-icon img{width:100%;height:100%;object-fit:cover}
+.search-item .item-meta{min-width:0}
+.search-item .item-title{font-size:.9rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-item .item-sub{font-size:.76rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-item .item-r{display:flex;align-items:center;gap:6px;flex:none}
+.match-hl{color:var(--a1);font-weight:800;background:rgba(91,140,255,.15);border-radius:2px;padding:0 1px}
+
+/* Sort Select */
+.sort-box{position:relative;flex:none;min-width:180px}
+@media(max-width:480px){
+  .sort-box{min-width:100%}
+}
+.sort-wrap{
+  position:relative;height:48px;border-radius:14px;background:var(--surface);border:1px solid var(--line);
+  display:flex;align-items:center;padding:0 36px 0 38px;color:var(--text);transition:border-color .15s,box-shadow .15s
+}
+.sort-wrap:hover{border-color:rgba(255,255,255,.2)}
+.sort-wrap:focus-within{border-color:var(--a1);box-shadow:0 0 0 3px rgba(91,140,255,.15)}
+.sort-icon{position:absolute;left:13px;pointer-events:none;color:var(--a1);width:18px;height:18px}
+.sort-chevron{position:absolute;right:13px;pointer-events:none;color:var(--dim);width:16px;height:16px}
+.sort-wrap select{
+  width:100%;background:transparent;border:0;outline:0;color:var(--text);
+  font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;appearance:none;-webkit-appearance:none
+}
+.sort-wrap select option{background:var(--bg2);color:var(--text);padding:8px}
+
+/* Category Filter Pills */
+.cat-bar{
+  display:flex;align-items:center;gap:8px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:6px;
+  scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch
+}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-pill{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:999px;
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);
+  font-size:.82rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s ease
+}
+.cat-pill:hover{color:var(--text);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+.cat-pill.active{
+  background:linear-gradient(90deg,rgba(91,140,255,.22),rgba(139,92,255,.22));
+  border-color:var(--a1);color:#fff;box-shadow:0 4px 14px rgba(91,140,255,.25)
+}
+.cat-count{
+  display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;
+  padding:0 5px;border-radius:99px;font-size:.68rem;font-weight:700;
+  background:rgba(255,255,255,.07);color:inherit
+}
+.cat-pill.active .cat-count{background:rgba(91,140,255,.35);color:#fff}
+
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:4px 4px 12px}
+.section-title{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.active-filter-badge{font-size:.72rem;color:var(--a1);background:rgba(91,140,255,.1);border:1px solid rgba(91,140,255,.22);padding:2px 8px;border-radius:99px;cursor:pointer}
 
 /* App cards */
 .grid{display:grid;gap:14px;grid-template-columns:1fr}
 @media(min-width:620px){.grid{grid-template-columns:1fr 1fr}}
 .card{position:relative;display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:20px;
-  background:var(--surface);border:1px solid var(--line);transition:transform .15s,border-color .15s}
+  background:var(--surface);border:1px solid var(--line);transition:transform .15s,border-color .15s,box-shadow .2s}
 .card:active{transform:scale(.985)}
 @media(hover:hover){.card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.18)}}
+.card.highlighted-card{border-color:var(--a1);box-shadow:0 0 0 3px rgba(91,140,255,.35);animation:glow 1.5s ease-out}
+@keyframes glow{0%{box-shadow:0 0 0 6px rgba(91,140,255,.6)}100%{box-shadow:0 0 0 0 rgba(91,140,255,0)}}
+
 .card-head{display:flex;align-items:center;gap:14px}
 .tile{width:54px;height:54px;border-radius:15px;display:grid;place-items:center;color:#fff;flex:none;overflow:hidden}
 .tile svg.i{width:26px;height:26px}
 .tile img{width:100%;height:100%;object-fit:cover}
+.card-head-info{min-width:0;flex:1}
 .card h3{font-size:1.08rem;line-height:1.25}
-.tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  padding:3px 9px;border-radius:99px;margin-top:4px}
+.card-tags{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 8px;border-radius:99px}
 .tag.live{color:var(--ok);background:rgba(46,211,160,.12)}
 .tag.soon{color:var(--warn);background:rgba(255,184,77,.12)}
-.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tag.stop{color:#ff6b7a;background:rgba(255,107,122,.12)}
+.tag.cat{color:var(--a1);background:rgba(91,140,255,.1);border:1px solid rgba(91,140,255,.2);font-weight:600}
+.tag.live::before,.tag.soon::before,.tag.stop::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+
 .card p{color:var(--muted);font-size:.92rem;flex:1}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:.95rem;color:#fff;
   background:linear-gradient(90deg,var(--a1),var(--a2))}
 .btn.off{background:rgba(255,255,255,.06);color:var(--dim);border:1px dashed var(--line);cursor:default}
-.empty{display:none;text-align:center;color:var(--dim);padding:40px 0}
+.empty{display:none;text-align:center;color:var(--dim);padding:46px 14px;background:var(--surface);border-radius:20px;border:1px dashed var(--line);margin:12px 0}
+.empty h4{color:var(--text);font-size:1.1rem;margin-bottom:6px}
+.empty p{color:var(--muted);font-size:.9rem;margin-bottom:14px}
+.empty button{padding:8px 16px;border-radius:10px;background:rgba(91,140,255,.15);color:var(--a1);font-size:.85rem;font-weight:600}
 
 /* Info lists */
 .page-title{font-size:1.5rem;font-weight:800;padding:20px 0 4px}
@@ -140,7 +230,6 @@ nav .in{max-width:760px;margin:0 auto;height:var(--nav-h);display:flex}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--dim);font-size:.72rem;font-weight:600}
 nav button svg.i{width:24px;height:24px}
 nav button.on{color:var(--a1)}
-.tag.stop{color:#ff6b7a;background:rgba(255,107,122,.12)}
 .notice{padding:10px 12px;border-radius:12px;background:rgba(255,107,122,.08);border:1px solid rgba(255,107,122,.25);color:#ffb3bb;font-size:.85rem}
 .stat.red b{color:#ff6b7a}
 .box{padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--line);margin-bottom:18px}
@@ -169,7 +258,7 @@ nav button.on{color:var(--a1)}
 #adm-msg{font-size:.9rem;margin:6px 0 14px;min-height:1.3em}
 #adm-msg.ok{color:var(--ok)}#adm-msg.err{color:#ff8a96}
 .hint{font-size:.8rem;color:var(--dim);margin-top:10px}
-#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);background:var(--surface2);border:1px solid var(--line);padding:10px 18px;border-radius:99px;font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:30}
+#toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);background:var(--surface2);border:1px solid var(--line);padding:10px 18px;border-radius:99px;font-size:.88rem;opacity:0;pointer-events:none;transition:.25s;z-index:70}
 #toast.show{opacity:1}
 footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
 </style>
@@ -197,14 +286,65 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
       </button>
     </div>
 
-    <label class="search">
-      <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="Search applications" autocomplete="off">
-    </label>
+    <!-- Search & Sort Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrapper">
+        <div class="search" id="search-box">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input id="q" type="search" placeholder="Search applications..." autocomplete="off" aria-label="Search applications" aria-autocomplete="list" aria-controls="search-suggestions">
+          <button type="button" id="q-clear" class="search-clear" aria-label="Clear search">
+            <svg class="i" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <!-- Search suggestions dropdown -->
+        <div id="search-suggestions" class="search-dropdown" role="listbox" style="display:none"></div>
+      </div>
 
-    <div class="section-title">Your Applications</div>
+      <!-- Sorting dropdown -->
+      <div class="sort-box">
+        <label for="sort-select" class="sr-only">Sort applications</label>
+        <div class="sort-wrap">
+          <svg class="i sort-icon" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+          <select id="sort-select" aria-label="Sort applications">
+            <option value="default">Sort: Default</option>
+            <option value="name-asc">Name (A → Z)</option>
+            <option value="name-desc">Name (Z → A)</option>
+            <option value="status-live">Status (Live first)</option>
+            <option value="status-stopped">Status (Stopped first)</option>
+          </select>
+          <svg class="i sort-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category filter pills system -->
+    <div class="cat-bar" id="cat-bar" role="tablist" aria-label="Category filter">
+      <button type="button" class="cat-pill active" data-cat="all" role="tab" aria-selected="true">
+        <span>All</span><span class="cat-count" id="cc-all">4</span>
+      </button>
+      <button type="button" class="cat-pill" data-cat="Drafting" role="tab" aria-selected="false">
+        <span>Drafting</span><span class="cat-count" id="cc-drafting">2</span>
+      </button>
+      <button type="button" class="cat-pill" data-cat="Productivity" role="tab" aria-selected="false">
+        <span>Productivity</span><span class="cat-count" id="cc-productivity">1</span>
+      </button>
+      <button type="button" class="cat-pill" data-cat="AI" role="tab" aria-selected="false">
+        <span>AI</span><span class="cat-count" id="cc-ai">1</span>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Your Applications</div>
+      <button type="button" class="active-filter-badge" id="reset-filters-btn" style="display:none">Reset filters</button>
+    </div>
+
     <div class="grid" id="grid"></div>
-    <div class="empty" id="empty">No applications match your search.</div>
+    <div class="empty" id="empty">
+      <h4>No applications found</h4>
+      <p id="empty-sub">No tools match your current search and filter criteria.</p>
+      <button type="button" id="empty-reset">Clear Search &amp; Filters</button>
+    </div>
+
     <footer>© CodeTech Developers · Vox Ecosystem<br>Independent applications, unified access.</footer>
   </section>
 
@@ -237,7 +377,7 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
       <div><span>Company</span><b>CodeTech Developers</b></div>
       <div><span>Lead Developer</span><b>Sachin Sheth</b></div>
       <div><span>Email</span><b><a href="mailto:codetech.appstore@gmail.com">codetech.appstore@gmail.com</a></b></div>
-      <div id="ver-row"><span>Version</span><b>1.2.0</b></div>
+      <div id="ver-row"><span>Version</span><b>1.3.0</b></div>
     </div>
   </section>
 
@@ -245,14 +385,14 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
   <section class="view doc" id="v-about">
     <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
     <h2>About Vox Ecosystem</h2>
-    <p class="meta">Version 1.2.0 · CodeTech Developers</p>
+    <p class="meta">Version 1.3.0 · CodeTech Developers</p>
     <p>Vox Ecosystem is a unified launcher for the Vox family of applications. Instead of remembering separate links, you get one installable home screen that opens each tool in a tap.</p>
     <h3>What's inside</h3>
     <ul>
-      <li><b>VoxCADD</b> — browser-based CAD drafting and design workspace.</li>
-      <li><b>Arch Pad Pro</b> — a digital sketch pad for architectural ideas.</li>
-      <li><b>10to7</b> — productivity and work management.</li>
-      <li><b>Interior Bot</b> — AI interior design, coming soon.</li>
+      <li><b>VoxCADD</b> — browser-based CAD drafting and design workspace (Drafting).</li>
+      <li><b>Arch Pad Pro</b> — a digital sketch pad for architectural ideas (Drafting).</li>
+      <li><b>10to7</b> — productivity and work management (Productivity).</li>
+      <li><b>Interior Bot</b> — AI interior design, coming soon (AI).</li>
     </ul>
     <h3>Independent by design</h3>
     <p>Each application is built and hosted independently. Vox Ecosystem simply connects them, so one app never depends on another to work.</p>
@@ -265,6 +405,14 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
     <button class="back" data-go="info"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>Info</button>
     <h2>Version History</h2>
     <p class="meta">Release notes</p>
+    <div class="ver">
+      <h3>1.3.0 <small>October 2026</small></h3>
+      <ul>
+        <li>Sorting dropdown next to search: sort by Name (A-Z, Z-A) or Status (Live/Stopped).</li>
+        <li>Category filter system: filter apps by Drafting, Productivity, and AI utilities with pill tabs.</li>
+        <li>Smart search suggestions: popular and matching app names dropdown while typing for faster discovery.</li>
+      </ul>
+    </div>
     <div class="ver">
       <h3>1.2.0 <small>October 2026</small></h3>
       <ul><li>Admin Console: stop or resume individual services.</li><li>Stopped services show a clear status and message.</li><li>New Vox Ecosystem logo.</li></ul>
@@ -359,16 +507,57 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
 <script>
 (function () {
   var APPS = [
-    { id: "voxcadd", name: "VoxCADD", desc: "Browser-based CAD drafting and design workspace.", url: "https://vox-cadd.vercel.app/", live: true, logo: "/voxcadd-logo.png", bg: "linear-gradient(135deg,#0b1020,#10304a)" },
-    { id: "archpad", name: "Arch Pad Pro", desc: "A digital sketch pad for architectural ideas.", url: "https://arch-pad-pro.vercel.app/", live: true, bg: "linear-gradient(135deg,#5b8cff,#3a5bd9)",
-      icon: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>' },
-    { id: "tento7", name: "10to7", desc: "Your productivity and work management application.", url: "https://10-to-7.vercel.app/", live: true, bg: "linear-gradient(135deg,#8b5cff,#5b3fd1)",
-      icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h3"/>' },
-    { id: "interiorbot", name: "Interior Bot", desc: "AI interior design application. Integration will follow after troubleshooting.", live: false, bg: "linear-gradient(135deg,#3a4468,#262e4d)",
-      icon: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>' }
+    { 
+      id: "voxcadd", 
+      name: "VoxCADD", 
+      category: "Drafting",
+      desc: "Browser-based CAD drafting and design workspace.", 
+      url: "https://vox-cadd.vercel.app/", 
+      live: true, 
+      logo: "/voxcadd-logo.png", 
+      bg: "linear-gradient(135deg,#0b1020,#10304a)" 
+    },
+    { 
+      id: "archpad", 
+      name: "Arch Pad Pro", 
+      category: "Drafting",
+      desc: "A digital sketch pad for architectural ideas.", 
+      url: "https://arch-pad-pro.vercel.app/", 
+      live: true, 
+      bg: "linear-gradient(135deg,#5b8cff,#3a5bd9)",
+      icon: '<path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>' 
+    },
+    { 
+      id: "tento7", 
+      name: "10to7", 
+      category: "Productivity",
+      desc: "Your productivity and work management application.", 
+      url: "https://10-to-7.vercel.app/", 
+      live: true, 
+      bg: "linear-gradient(135deg,#8b5cff,#5b3fd1)",
+      icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 15h3"/>' 
+    },
+    { 
+      id: "interiorbot", 
+      name: "Interior Bot", 
+      category: "AI",
+      desc: "AI interior design application. Integration will follow after troubleshooting.", 
+      live: false, 
+      bg: "linear-gradient(135deg,#3a4468,#262e4d)",
+      icon: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 17l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>' 
+    }
   ];
 
-  var grid = document.getElementById("grid"), empty = document.getElementById("empty"), q = document.getElementById("q");
+  var grid = document.getElementById("grid"),
+      empty = document.getElementById("empty"),
+      q = document.getElementById("q"),
+      qClear = document.getElementById("q-clear"),
+      suggestionsEl = document.getElementById("search-suggestions"),
+      sortSelect = document.getElementById("sort-select"),
+      catBar = document.getElementById("cat-bar"),
+      resetFiltersBtn = document.getElementById("reset-filters-btn"),
+      emptyResetBtn = document.getElementById("empty-reset");
+
   var ARROW = '<svg class="i" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></svg>';
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -376,26 +565,117 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
   var status = {};   // id -> {enabled, message} as published
   function isStopped(a){ return a.live && status[a.id] && status[a.id].enabled === false; }
 
-  function render(filter) {
-    var f = (filter || "").trim().toLowerCase(), html = "", shown = 0;
+  // Filter & Sort state
+  var selectedCategory = "all";
+  var selectedSort = "default";
+  var highlightedSuggestionIndex = -1;
+  var currentSuggestions = [];
+
+  function getAppStatusLabel(a) {
+    if (!a.live) return "Coming soon";
+    if (isStopped(a)) return "Stopped";
+    return "Live";
+  }
+
+  function getAppStatusClass(a) {
+    if (!a.live) return "soon";
+    if (isStopped(a)) return "stop";
+    return "live";
+  }
+
+  function getSortedList(apps) {
+    var list = apps.slice();
+    switch (selectedSort) {
+      case "name-asc":
+        list.sort(function (a, b) { return a.name.localeCompare(b.name); });
+        break;
+      case "name-desc":
+        list.sort(function (a, b) { return b.name.localeCompare(a.name); });
+        break;
+      case "status-live":
+        list.sort(function (a, b) {
+          var aScore = (!a.live ? 2 : (isStopped(a) ? 3 : 1));
+          var bScore = (!b.live ? 2 : (isStopped(b) ? 3 : 1));
+          return aScore - bScore || a.name.localeCompare(b.name);
+        });
+        break;
+      case "status-stopped":
+        list.sort(function (a, b) {
+          var aScore = (isStopped(a) ? 1 : (!a.live ? 2 : 3));
+          var bScore = (isStopped(b) ? 1 : (!b.live ? 2 : 3));
+          return aScore - bScore || a.name.localeCompare(b.name);
+        });
+        break;
+      default:
+        // Default keeps original array order
+        break;
+    }
+    return list;
+  }
+
+  function updateCategoryCounts() {
+    var total = APPS.length;
+    var counts = { Drafting: 0, Productivity: 0, AI: 0 };
     APPS.forEach(function (a) {
-      if (f && (a.name + " " + a.desc).toLowerCase().indexOf(f) === -1) return;
-      shown++;
+      if (counts[a.category] !== undefined) counts[a.category]++;
+    });
+    document.getElementById("cc-all").textContent = total;
+    if (document.getElementById("cc-drafting")) document.getElementById("cc-drafting").textContent = counts["Drafting"] || 0;
+    if (document.getElementById("cc-productivity")) document.getElementById("cc-productivity").textContent = counts["Productivity"] || 0;
+    if (document.getElementById("cc-ai")) document.getElementById("cc-ai").textContent = counts["AI"] || 0;
+  }
+
+  function render() {
+    var f = (q.value || "").trim().toLowerCase();
+    qClear.style.display = f ? "inline-flex" : "none";
+
+    var isFiltered = (selectedCategory !== "all" || f.length > 0 || selectedSort !== "default");
+    resetFiltersBtn.style.display = isFiltered ? "inline-block" : "none";
+
+    // Filter by search and category
+    var filtered = APPS.filter(function (a) {
+      var matchesCat = (selectedCategory === "all" || a.category.toLowerCase() === selectedCategory.toLowerCase());
+      if (!matchesCat) return false;
+      if (f) {
+        var haystack = (a.name + " " + a.desc + " " + a.category).toLowerCase();
+        if (haystack.indexOf(f) === -1) return false;
+      }
+      return true;
+    });
+
+    var sorted = getSortedList(filtered);
+    var html = "";
+
+    sorted.forEach(function (a) {
       var stopped = isStopped(a);
       var tile = a.logo ? '<img src="' + a.logo + '" alt="' + esc(a.name) + ' logo">'
                         : '<svg class="i" viewBox="0 0 24 24">' + a.icon + '</svg>';
-      var tag = !a.live ? '<span class="tag soon">Coming soon</span>'
-              : stopped ? '<span class="tag stop">Stopped</span>' : '<span class="tag live">Live</span>';
+      var statusClass = getAppStatusClass(a);
+      var statusLabel = getAppStatusLabel(a);
+      var tag = '<span class="tag ' + statusClass + '">' + statusLabel + '</span>';
+      var catBadge = '<span class="tag cat">' + esc(a.category) + '</span>';
+
       var note = stopped ? '<div class="notice">' + esc((status[a.id].message || "").trim() || "This service is temporarily unavailable.") + '</div>' : "";
       var action = !a.live ? '<span class="btn off">Coming Soon</span>'
         : stopped ? '<span class="btn off">Temporarily unavailable</span>'
         : '<a class="btn" href="' + a.url + '" target="_blank" rel="noopener noreferrer">Open ' + esc(a.name) + ' ' + ARROW + '</a>';
-      html += '<article class="card"><div class="card-head"><div class="tile" style="background:' + a.bg + '">' + tile + '</div>' +
-              '<div><h3>' + esc(a.name) + '</h3>' + tag + '</div></div>' +
-              '<p>' + esc(a.desc) + '</p>' + note + action + '</article>';
+
+      html += '<article class="card" id="card-' + a.id + '" data-app-id="' + a.id + '">' +
+                '<div class="card-head">' +
+                  '<div class="tile" style="background:' + a.bg + '">' + tile + '</div>' +
+                  '<div class="card-head-info">' +
+                    '<h3>' + esc(a.name) + '</h3>' +
+                    '<div class="card-tags">' + tag + catBadge + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<p>' + esc(a.desc) + '</p>' + note + action +
+              '</article>';
     });
+
     grid.innerHTML = html;
-    empty.style.display = shown ? "none" : "block";
+    empty.style.display = sorted.length ? "none" : "block";
+
+    // Summary stats
     var live = 0, soon = 0, stop = 0;
     APPS.forEach(function (a) { if (!a.live) soon++; else if (isStopped(a)) stop++; else live++; });
     document.getElementById("n-live").textContent = live;
@@ -403,7 +683,193 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
     document.getElementById("n-stop").textContent = stop;
     document.getElementById("stat-stop").style.display = stop ? "" : "none";
   }
-  q.addEventListener("input", function () { render(q.value); });
+
+  // ---------- Search Autocomplete & Popular Suggestions ----------
+  function highlightMatch(text, query) {
+    if (!query) return esc(text);
+    var idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return esc(text);
+    var before = esc(text.substring(0, idx));
+    var match = esc(text.substring(idx, idx + query.length));
+    var after = esc(text.substring(idx + query.length));
+    return before + '<span class="match-hl">' + match + '</span>' + after;
+  }
+
+  function renderSuggestions() {
+    var raw = (q.value || "").trim();
+    var query = raw.toLowerCase();
+
+    // If query has text, search across APPS; if blank, show popular/recommended apps
+    var matches = [];
+    if (query) {
+      matches = APPS.filter(function (a) {
+        return (a.name + " " + a.category + " " + a.desc).toLowerCase().indexOf(query) !== -1;
+      });
+    } else {
+      // Popular list (all apps in workspace)
+      matches = APPS.slice();
+    }
+
+    currentSuggestions = matches;
+    highlightedSuggestionIndex = -1;
+
+    if (!matches.length) {
+      suggestionsEl.innerHTML = '<div class="search-dropdown-title">No matching apps</div>' +
+        '<div style="padding:10px 12px;color:var(--dim);font-size:.84rem">Try searching CAD, sketch, tasks, or AI</div>';
+      suggestionsEl.style.display = "block";
+      return;
+    }
+
+    var title = query ? "Matching Applications" : "Popular Applications";
+    var html = '<div class="search-dropdown-title">' + title + '</div>';
+
+    matches.forEach(function (a, index) {
+      var icon = a.logo ? '<img src="' + a.logo + '" alt="' + esc(a.name) + '">'
+                        : '<svg class="i" viewBox="0 0 24 24">' + a.icon + '</svg>';
+      var statusClass = getAppStatusClass(a);
+      var statusLabel = getAppStatusLabel(a);
+
+      html += '<button type="button" class="search-item" data-index="' + index + '" data-name="' + esc(a.name) + '" data-id="' + a.id + '" role="option">' +
+                '<div class="item-l">' +
+                  '<div class="item-icon" style="background:' + a.bg + '">' + icon + '</div>' +
+                  '<div class="item-meta">' +
+                    '<div class="item-title">' + highlightMatch(a.name, query) + '</div>' +
+                    '<div class="item-sub">' + esc(a.category) + ' · ' + esc(a.desc) + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="item-r">' +
+                  '<span class="tag ' + statusClass + '">' + statusLabel + '</span>' +
+                '</div>' +
+              '</button>';
+    });
+
+    suggestionsEl.innerHTML = html;
+    suggestionsEl.style.display = "block";
+  }
+
+  function hideSuggestions() {
+    suggestionsEl.style.display = "none";
+    highlightedSuggestionIndex = -1;
+  }
+
+  function selectSuggestion(app) {
+    if (!app) return;
+    q.value = app.name;
+    hideSuggestions();
+    render();
+
+    // Scroll card into view and highlight
+    var cardEl = document.getElementById("card-" + app.id);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      cardEl.classList.add("highlighted-card");
+      setTimeout(function () { cardEl.classList.remove("highlighted-card"); }, 1600);
+    }
+  }
+
+  // Search input events
+  q.addEventListener("input", function () {
+    render();
+    renderSuggestions();
+  });
+
+  q.addEventListener("focus", function () {
+    renderSuggestions();
+  });
+
+  q.addEventListener("keydown", function (e) {
+    var items = suggestionsEl.querySelectorAll(".search-item");
+    if (!items.length || suggestionsEl.style.display === "none") return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      highlightedSuggestionIndex = (highlightedSuggestionIndex + 1) % items.length;
+      updateSuggestionHighlight(items);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      highlightedSuggestionIndex = (highlightedSuggestionIndex - 1 + items.length) % items.length;
+      updateSuggestionHighlight(items);
+    } else if (e.key === "Enter" && highlightedSuggestionIndex >= 0) {
+      e.preventDefault();
+      var selected = currentSuggestions[highlightedSuggestionIndex];
+      selectSuggestion(selected);
+    } else if (e.key === "Escape") {
+      hideSuggestions();
+    }
+  });
+
+  function updateSuggestionHighlight(items) {
+    items.forEach(function (el, i) {
+      el.classList.toggle("active-item", i === highlightedSuggestionIndex);
+      if (i === highlightedSuggestionIndex) el.scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  suggestionsEl.addEventListener("click", function (e) {
+    var item = e.target.closest(".search-item");
+    if (!item) return;
+    var idx = parseInt(item.getAttribute("data-index"), 10);
+    if (!isNaN(idx) && currentSuggestions[idx]) {
+      selectSuggestion(currentSuggestions[idx]);
+    }
+  });
+
+  qClear.addEventListener("click", function () {
+    q.value = "";
+    hideSuggestions();
+    render();
+    q.focus();
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".search-wrapper")) {
+      hideSuggestions();
+    }
+  });
+
+  // Sort dropdown change
+  sortSelect.addEventListener("change", function () {
+    selectedSort = sortSelect.value;
+    render();
+  });
+
+  // Category filter clicks
+  catBar.addEventListener("click", function (e) {
+    var pill = e.target.closest(".cat-pill");
+    if (!pill) return;
+    var cat = pill.getAttribute("data-cat") || "all";
+    selectedCategory = cat;
+
+    catBar.querySelectorAll(".cat-pill").forEach(function (p) {
+      var isAct = (p === pill);
+      p.classList.toggle("active", isAct);
+      p.setAttribute("aria-selected", isAct ? "true" : "false");
+    });
+
+    render();
+  });
+
+  // Reset filters
+  function resetAllFilters() {
+    q.value = "";
+    selectedCategory = "all";
+    selectedSort = "default";
+    sortSelect.value = "default";
+    catBar.querySelectorAll(".cat-pill").forEach(function (p) {
+      var isAll = p.getAttribute("data-cat") === "all";
+      p.classList.toggle("active", isAll);
+      p.setAttribute("aria-selected", isAll ? "true" : "false");
+    });
+    hideSuggestions();
+    render();
+  }
+
+  resetFiltersBtn.addEventListener("click", resetAllFilters);
+  emptyResetBtn.addEventListener("click", resetAllFilters);
+
+  // Initial render & counts
+  updateCategoryCounts();
   render();
 
   // Navigation (hash based so the Back button works)
@@ -425,7 +891,6 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
   window.addEventListener("hashchange", show);
   show();
 
-
   // ---------- Helpers ----------
   function lsGet(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k,v){ try { localStorage.setItem(k,v); } catch (e) {} }
@@ -441,7 +906,7 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
       .then(function (j) {
         status = (j && j.services) || {};
         updatedAt = (j && j.updated) || "";
-        render(q.value);
+        render();
         resetDraft();
       })
       .catch(function () { /* offline or missing file: all services stay available */ });
@@ -543,7 +1008,7 @@ footer{text-align:center;color:var(--dim);font-size:.76rem;margin-top:30px}
         return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.message || ("GitHub error " + r.status)); });
       })
       .then(function () {
-        status = JSON.parse(JSON.stringify(draft)); updatedAt = body.updated; render(q.value); renderAdmin();
+        status = JSON.parse(JSON.stringify(draft)); updatedAt = body.updated; render(); renderAdmin();
         lsSet("vox_g_owner", owner); lsSet("vox_g_repo", repo); lsSet("vox_g_branch", branch);
         if (gRemember.checked) lsSet("vox_g_token", token);
         setMsg("Published. Vercel redeploys in about a minute, then every device picks up the change.", "ok");
